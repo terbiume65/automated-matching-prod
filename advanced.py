@@ -15,10 +15,9 @@ if 'Status' not in st.session_state:
 
 if 'Dataset' not in st.session_state:
     st.session_state['Dataset'] = None
-    
+
 if 'Output' not in st.session_state:
     st.session_state['Output'] = None
-
 
 df=st.session_state['Dataset'] 
 engine=pd.read_csv("GADMsmall.csv",encoding="utf-8-sig")
@@ -376,6 +375,8 @@ stopwords=['sub-prefecture',
 st.title("Automation of Geographical Matching at all levels")
 st.write("This web app takes a dataset with a column of place names, even with spelling mistakes or in a different language, and return its match from the GADM database")
 
+
+
 #Accept file as input
 st.header("Input")
 file=st.file_uploader('Upload your dataset',type=["csv","xls","xlsx"]) 
@@ -400,7 +401,11 @@ if submit==True:
 if st.session_state['Status'] == 'Settings':
     st.subheader("Your dataset:")
     displaydf=df.astype("str")
-    st.table(displaydf)
+    try:
+        st._legacy_dataframe(displaydf)
+    except:
+        st.dataframe(displaydf)
+
 
 #Custom settings for the user
 st.header("Settings")
@@ -408,9 +413,7 @@ if st.session_state['Status'] == 'Settings':
     options=list(df.columns)
     st.subheader("Column of place names")
     choice=st.selectbox("Select the column of place names in your dataset",options)
-    st.subheader("Output columns (You may select multiple)")
-    outcol=st.multiselect("Select your desired output columns",["ISO3166 Alpha-3 (3-letter) Country Code","ISO3166 Alpha-2 (2-letter) Country Code","ISO3166 Numeric Country Code","UNDP Official Name"],"ISO3166 Alpha-3 (3-letter) Country Code")
-    
+   
     
     start=st.button("Match")
     message=st.empty()
@@ -445,7 +448,7 @@ if st.session_state['Status'] == 'Settings':
 
             if not repeated:
                 for j in range(len(hierarchy)): #for the one name, start cycling through each layer
-                    pool=df[hierarchy[j]].str.lower().values 
+                    pool=engine[hierarchy[j]].str.lower().values 
                     
                     for k in range(len(pool)): #match with each item in the pool layer of database
                         element=pool[k]
@@ -479,7 +482,7 @@ if st.session_state['Status'] == 'Settings':
                             target=wikimatch.lower()
                             
                             for j in range(len(hierarchy)): #for the one name, start cycling through each layer
-                                pool=df[hierarchy[j]].str.lower().values 
+                                pool=engine[hierarchy[j]].str.lower().values 
                                 for k in range(len(pool)): #match with every name in pool layer
                                     element=pool[k]
                                     if target==element:
@@ -510,7 +513,7 @@ if st.session_state['Status'] == 'Settings':
                         
 
                         for j in range(len(hierarchy)): #add each word from each layer to the fuzzy set algo
-                            pool=df[hierarchy[j]].str.lower().values 
+                            pool=engine[hierarchy[j]].str.lower().values 
                             for k in range(len(pool)):
                                 element=pool[k]
                                 if type(element)==str:
@@ -529,7 +532,7 @@ if st.session_state['Status'] == 'Settings':
                         
                         if fitness>=threshold: #only attempt closest match if similarity is over a certain threshold
                             for j in range(len(hierarchy)): #for the one name, start cycling through each layer
-                                pool=df[hierarchy[j]].str.lower().values 
+                                pool=engine[hierarchy[j]].str.lower().values 
                                 for k in range(len(pool)): #match with each item in the pool layer of database
                                     element=pool[k]
                                     if closest==element:
@@ -555,6 +558,8 @@ if st.session_state['Status'] == 'Settings':
             
             results=results+[found] #add all matches back to the output list
             results_layerfound=results_layerfound+[layerfound]
+            progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
+            progressbar.progress(int((i+1)/len(names)*90))
 
         #handling results-------------------------------------------
         final=[]
@@ -566,10 +571,11 @@ if st.session_state['Status'] == 'Settings':
         lastgid=[]
 
         #extract all record matched into a list of dataframes
+        progresslabel.write("Formatting output...")
         for i in range(len(results)):
             matches=results[i]
             if len(matches)!=0:
-                matchdf=df.loc[matches]
+                matchdf=engine.loc[matches]
             else:
                 matchdf=pd.DataFrame()
             final=final+[matchdf]
@@ -681,17 +687,23 @@ if st.session_state['Status'] == 'Settings':
 
 
         progressbar.progress(100)
-        successful.success("Matching complete")
+        totalmatches=0
+        for i in matchnum:
+            if i >0:
+                totalmatches+=1
+        successful.success(f"Matching complete! At least one match returned for {totalmatches} out of {len(names)} items. {len(names)-totalmatches} out of {len(names)} items returned no match.")
         st.session_state['Output']=outputdf
         displayoutput=st.session_state['Output'].astype("str")
         outputlabel.subheader("Output:")
-        outputdf.dataframe(displayoutput)
 
         #Export buttons
     if st.session_state['Output'] is not None:
         displayoutput=st.session_state['Output'].astype("str")
         outputlabel.subheader("Output:")
-        outputdf.dataframe(displayoutput)
+        try:
+            st._legacy_dataframe(displayoutput)
+        except:
+            st.dataframe(displayoutput)
         col1, col2 = st.columns(2)
         csv=convert_csv(st.session_state['Output'])
         st.download_button(
