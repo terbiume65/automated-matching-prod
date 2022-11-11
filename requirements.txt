@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy 
+re
+time
+fuzzyset
+gc
+wikipedia
+itertools
+io
