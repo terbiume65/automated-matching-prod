@@ -1,7 +1,7 @@
 streamlit
 pandas
 numpy 
-fuzzyset
+fuzzyset2
 wikipedia
 EasyNMT
 pandas
