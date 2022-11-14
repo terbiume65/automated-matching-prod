@@ -1,10 +1,11 @@
 streamlit
 pandas
 numpy 
-re
-time
 fuzzyset
 gc
 wikipedia
-itertools
-io
+EasyNMT
+pandas
+python_Levenshtein
+XlsxWriter
+openpyxl
