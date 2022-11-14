@@ -2,7 +2,6 @@ streamlit
 pandas
 numpy 
 fuzzyset
-gc
 wikipedia
 EasyNMT
 pandas
