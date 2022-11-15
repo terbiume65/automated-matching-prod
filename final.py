@@ -78,7 +78,7 @@ def CheckString(s):
             onlyString=False
     return onlyString
 
-def match(target,engine):
+def match(target,engine,threshold):
     new=[]
     model = EasyNMT('opus-mt')
     words=list(target)
@@ -94,7 +94,6 @@ def match(target,engine):
             if not CheckEnglish(target):#translate if not English
                 target=model.translate(target, target_lang='en')
             distmatrix=[]
-            threshold=round(0.50*len(target))
             for m in range(len(pool)):
                 distmatrix=distmatrix+[distance(target,pool[m])]
                 if min(distmatrix)<=threshold:
@@ -460,8 +459,8 @@ if model=="Country names matching":#--------------------------------------------
         choice=st.selectbox("Select the column of country names in your dataset",options)
         st.subheader("Output columns (You may select multiple)")
         outcol=st.multiselect("Select your desired output columns",["ISO3166 Alpha-3 (3-letter) Country Code","ISO3166 Alpha-2 (2-letter) Country Code","ISO3166 Numeric Country Code","UNDP Official Name"],"ISO3166 Alpha-3 (3-letter) Country Code")
-        
-        
+        st.subheader("Set similarity threshold for spelling correction")
+        threshold=st.slider("Set the threshold of spelling correction. The maximum value of 0.9 means little correction (only correct when texts are very similar), 0.3 means more correction (correct even when texts are dissimilar), default value is 0.7",0.3,0.9,0.7)
         start=st.button("Match")
         message=st.empty()
         progresslabel=st.empty()
@@ -486,7 +485,7 @@ if model=="Country names matching":#--------------------------------------------
             for i in range(len(batches)):
                 
                 progresslabel.write("Matching of item "+str(i*n+1)+" to "+str((i+1)*n)+"...")
-                results=results+match(batches[i],engine)
+                results=results+match(batches[i],engine,threshold)
                 progressbar.progress(int((i/(len(batches)+1))*100))
 
                 gc.collect()
@@ -566,6 +565,8 @@ else: #-------------------------------------------------------------------------
         options=list(df.columns)
         st.subheader("Column of place names")
         choice=st.selectbox("Select the column of place names in your dataset",options)
+        st.subheader("Set similarity threshold for spelling correction")
+        threshold=st.slider("Set the threshold of spelling correction. The maximum value of 0.9 means little correction (only correct when texts are very similar), 0.3 means more correction (correct even when texts are dissimilar), default value is 0.7",0.3,0.9,0.7)
     
         
         start=st.button("Match")
@@ -680,7 +681,6 @@ else: #-------------------------------------------------------------------------
                             
                             closest=matrix.get(target)[0][1] #return closest match
                             fitness=matrix.get(target)[0][0] #return cosine similarity
-                            threshold=0.7 #set threshold
                             
                             
                             if fitness>=threshold: #only attempt closest match if similarity is over a certain threshold
