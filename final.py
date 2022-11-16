@@ -587,6 +587,8 @@ else: #-------------------------------------------------------------------------
             hierarchy=['NAME_1', 'VARNAME_1', 'NL_NAME_1', 'NAME_2', 'VARNAME_2', 'NL_NAME_2', 'NAME_3', 'VARNAME_3', 'NL_NAME_3', 'NAME_4', 'VARNAME_4', 'NAME_5']
             namecols=['NAME_0', 'NAME_1', 'NAME_2', 'NAME_3', 'NAME_4', 'NAME_5']
             names=list(df[choice])
+            progresslabel.write(f"Matching item 0 out of {len(names)}...")
+            progressbar.progress(0)
 
             results=[]
             results_layerfound=[]
@@ -606,6 +608,7 @@ else: #-------------------------------------------------------------------------
                     if target in names[:i]: #find repeated
                         repeated=True
                         found=results[names[:i].index(target)]
+                        print(names[:i].index(target))
                         layerfound=results_layerfound[names[:i].index(target)]
                         
 
