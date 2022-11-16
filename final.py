@@ -690,9 +690,11 @@ else: #-------------------------------------------------------------------------
                                                     matrix.add(alternatives[m])    
                                             else:
                                                 matrix.add(element)
-                                
-                                closest=matrix.get(target)[0][1] #return closest match
-                                fitness=matrix.get(target)[0][0] #return cosine similarity
+                                try:
+                                    closest=matrix.get(target)[0][1] #return closest match
+                                    fitness=matrix.get(target)[0][0] #return cosine similarity
+                                except:
+                                    fitness=-1
                                 
                                 
                                 if fitness>=threshold: #only attempt closest match if similarity is over a certain threshold
@@ -829,9 +831,11 @@ else: #-------------------------------------------------------------------------
                                                     matrix.add(element)
                                             
                                 
-                            
-                                closest=matrix.get(target)[0][1] #return closest match
-                                fitness=matrix.get(target)[0][0] #return cosine similarity
+                                try:
+                                    closest=matrix.get(target)[0][1] #return closest match
+                                    fitness=matrix.get(target)[0][0] #return cosine similarity
+                                except:
+                                    fitness=-1
                                 
                                 
                                 if fitness>=threshold: #only attempt closest match if similarity is over a certain threshold
