@@ -826,6 +826,10 @@ else: #-------------------------------------------------------------------------
                                                         matrix.add(alternatives[m])    
                                                 else:
                                                     matrix.add(element)
+                                            st.write(filter)
+                                            st.write(codes[k])
+                                
+                                
                                 
                                 closest=matrix.get(target)[0][1] #return closest match
                                 fitness=matrix.get(target)[0][0] #return cosine similarity
