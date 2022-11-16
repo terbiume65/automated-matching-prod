@@ -723,7 +723,7 @@ else: #-------------------------------------------------------------------------
                     progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
                     progressbar.progress(int((i+1)/len(names)*90))
 
-                    gc.collect()
+                    
             
             else: #--------------------------------------------------------------------
                 filters=list(df[constraint])
@@ -860,7 +860,7 @@ else: #-------------------------------------------------------------------------
                     progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
                     progressbar.progress(int((i+1)/len(names)*90))
 
-                    gc.collect()
+                    
 
 
             #handling results-------------------------------------------
