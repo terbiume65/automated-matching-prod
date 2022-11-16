@@ -528,7 +528,7 @@ if model=="Country names matching":#--------------------------------------------
             st.download_button(label="Download as Excel",file_name="output.xlsx",data=buffer,)
 
     
-else: #--------------------------------------------------------------------------------
+else: #-------------------------------------------------------------------------------- GADM
     #Accept file as input
     st.header("Input")
     file=st.file_uploader('Upload your dataset',type=["csv","xls","xlsx"],key=1) 
@@ -567,8 +567,13 @@ else: #-------------------------------------------------------------------------
         choice=st.selectbox("Select the column of place names in your dataset",options)
         st.subheader("Set similarity threshold for spelling correction")
         threshold=st.slider("Set the threshold of spelling correction. The maximum value of 0.9 means little correction (only correct when texts are very similar), 0.3 means more correction (correct even when texts are dissimilar), default value is 0.7",0.3,0.9,0.7)
-    
-        
+        st.subheader("Select mode")
+        mode=st.radio("Do you want the matching process to be unconstrained or constrained to certain countries?",("Unconstrained", "Constrained"))
+        if mode == "constrained":
+            st.subheader("Select the column for country ISO3166 Alpha-3 Codes")
+            constraint=st.selectbox("Select the column containing the Alpha-3 codes of countries corresponding to the search items, if you only have a column of country names but not their Alpha-3 code, perform country matching first",df.columns)
+            
+
         start=st.button("Match")
         message=st.empty()
         progresslabel=st.empty()
