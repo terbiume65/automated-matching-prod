@@ -84,7 +84,7 @@ def match(target,engine,threshold):
     words=list(target)
     pool=engine["Name"].str.lower().values
     for j in range(len(words)):
-        target=words[j].lower()
+        target=str(words[j]).lower()
         matched=False
         for k in range(len(pool)):#attempt direct matching
             if target==pool[k]:
@@ -570,8 +570,8 @@ else: #-------------------------------------------------------------------------
         st.subheader("Select mode")
         mode=st.radio("Do you want the matching process to be unconstrained or constrained to certain countries?",("Unconstrained", "Constrained"))
         if mode == "Constrained":
-            st.subheader("Select the column for country ISO3166 Alpha-3 Codes")
-            constraint=st.selectbox("Select the column containing the Alpha-3 codes of countries corresponding to the search items, if you only have a column of country names but not their Alpha-3 code, perform country matching first",df.columns)
+            st.subheader("Select the constraint column of country ISO3166 Alpha-3 Codes")
+            constraint=st.selectbox("Select the column containing the Alpha-3 codes of countries corresponding to the search items. If you only have a column of country names but not their Alpha-3 code, perform country matching first",df.columns)
             
 
         start=st.button("Match")
@@ -593,7 +593,7 @@ else: #-------------------------------------------------------------------------
 
             #attempt direct match
             for i in range(len(names)): #one name at a time
-                target=names[i].lower()
+                target=str(names[i]).lower()
                 matched=False
                 repeated=False
                 found=[]
