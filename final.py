@@ -84,7 +84,7 @@ def match(target,engine,threshold):
     words=list(target)
     pool=engine["Name"].str.lower().values
     for j in range(len(words)):
-        target=str(words[j]).lower()
+        target=words[j].lower()
         matched=False
         for k in range(len(pool)):#attempt direct matching
             if target==pool[k]:
@@ -593,7 +593,7 @@ else: #-------------------------------------------------------------------------
 
             #attempt direct match
             for i in range(len(names)): #one name at a time
-                target=str(names[i]).lower()
+                target=names[i].lower()
                 matched=False
                 repeated=False
                 found=[]
