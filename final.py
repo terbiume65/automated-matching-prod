@@ -569,7 +569,7 @@ else: #-------------------------------------------------------------------------
         threshold=st.slider("Set the threshold of spelling correction. The maximum value of 0.9 means little correction (only correct when texts are very similar), 0.3 means more correction (correct even when texts are dissimilar), default value is 0.7",0.3,0.9,0.7)
         st.subheader("Select mode")
         mode=st.radio("Do you want the matching process to be unconstrained or constrained to certain countries?",("Unconstrained", "Constrained"))
-        if mode == "constrained":
+        if mode == "Constrained":
             st.subheader("Select the column for country ISO3166 Alpha-3 Codes")
             constraint=st.selectbox("Select the column containing the Alpha-3 codes of countries corresponding to the search items, if you only have a column of country names but not their Alpha-3 code, perform country matching first",df.columns)
             
