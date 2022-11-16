@@ -607,12 +607,6 @@ else: #-------------------------------------------------------------------------
                     
                     if target in names[:i]: #find repeated
                         repeated=True
-                        st.write(i)
-                        st.write(target)
-                        st.write(names[:i])
-                        st.write(names[:i].index(target))
-                        st.write(results)
-                        st.write("End of iteration")
                         found=results[names[:i].index(target)]
                         print(names[:i].index(target))
                         layerfound=results_layerfound[names[:i].index(target)]
