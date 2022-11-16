@@ -816,6 +816,8 @@ else: #-------------------------------------------------------------------------
                                 for j in range(len(hierarchy)): #add each word from each layer to the fuzzy set algo
                                     pool=engine[hierarchy[j]].str.lower().values 
                                     for k in range(len(pool)):
+                                        st.write(filter)
+                                        st.write(codes[k])
                                         if filter==codes[k]:
                                             element=pool[k]
                                             if type(element)==str:
@@ -826,11 +828,9 @@ else: #-------------------------------------------------------------------------
                                                         matrix.add(alternatives[m])    
                                                 else:
                                                     matrix.add(element)
-                                            st.write(filter)
-                                            st.write(codes[k])
+                                            
                                 
-                                
-                                
+                            
                                 closest=matrix.get(target)[0][1] #return closest match
                                 fitness=matrix.get(target)[0][0] #return cosine similarity
                                 
