@@ -587,21 +587,22 @@ else: #-------------------------------------------------------------------------
             hierarchy=['NAME_1', 'VARNAME_1', 'NL_NAME_1', 'NAME_2', 'VARNAME_2', 'NL_NAME_2', 'NAME_3', 'VARNAME_3', 'NL_NAME_3', 'NAME_4', 'VARNAME_4', 'NAME_5']
             namecols=['NAME_0', 'NAME_1', 'NAME_2', 'NAME_3', 'NAME_4', 'NAME_5']
             names=list(df[choice])
+
             results=[]
             results_layerfound=[]
             
+            if mode=="Unconstrained":
 
+                #attempt direct match
+                for i in range(len(names)): #one name at a time
+                    target=names[i].lower()
+                    matched=False
+                    repeated=False
+                    found=[]
+                    layerfound=[]
 
-            #attempt direct match
-            for i in range(len(names)): #one name at a time
-                target=names[i].lower()
-                matched=False
-                repeated=False
-                found=[]
-                layerfound=[]
-
-                if mode=="Unconstrained":
-                
+                    
+                    
                     if target in names[:i]: #find repeated
                         repeated=True
                         found=results[names[:i].index(target)]
@@ -713,17 +714,147 @@ else: #-------------------------------------------------------------------------
                                                         matched=True
                                                         found=found+[k]
                                                         layerfound=layerfound+[j]
-                
-                else:
-                    st.success("Constrained matching coming soon")
-                        
 
-
-                
                 results=results+[found] #add all matches back to the output list
                 results_layerfound=results_layerfound+[layerfound]
                 progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
                 progressbar.progress(int((i+1)/len(names)*90))
+            
+            else: #--------------------------------------------------------------------
+                filters=list(df[constraint])
+                codes=list(engine["GID_0"].str.lower())
+                for i in range(len(names)): #one name at a time
+                    target=names[i].lower()
+                    filter=filters[i].lower()
+                    matched=False
+                    repeated=False
+                    found=[]
+                    layerfound=[]
+
+                    
+                    
+                    if target in names[:i]: #find repeated
+                        if filter==filters[names[:i].index(target)].lower():
+                            repeated=True
+                            found=results[names[:i].index(target)]
+                            layerfound=results_layerfound[names[:i].index(target)]
+                        
+
+                    if not repeated:
+                        for j in range(len(hierarchy)): #for the one name, start cycling through each layer
+                            pool=engine[hierarchy[j]].str.lower().values 
+                            
+                            for k in range(len(pool)): #match with each item in the pool layer of database
+                                if filter==codes[k]:
+                                    element=pool[k]
+                                    if target==element:
+                                        if k in found:
+                                            layerfound.pop(found.index(k))
+                                            found.remove(k)
+                                        matched=True
+                                        found=found+[k]
+                                        layerfound=layerfound+[j]
+
+                                    if "|" in str(element):
+                                        alternatives=element.split("|")
+                                        for m in range(len(alternatives)):
+                                            if target==alternatives[m]:
+                                                if k in found:
+                                                    layerfound.pop(found.index(k))
+                                                    found.remove(k)
+                                                matched=True
+                                                found=found+[k]
+                                                layerfound=layerfound+[j]
+                            
+                        if not matched: #all layers cycled but zero direct match
+                            if CheckEnglish(target)==False: #if not English word, wiki query to English and perform direct search
+                                try:
+                                    wikimatch=wikipedia.search(target)[0]
+                                    wikimatchsplit=wikimatch.split()
+                                    if len(wikimatchsplit)>=1: #Remove parenthesis and stopwords from the actual place name
+                                        resultwords  = [word for word in wikimatchsplit if word.lower() not in stopwords]
+                                        wikimatch = ' '.join(resultwords).strip().replace('(','').replace(')','').replace(',','')
+                                    target=wikimatch.lower()
+                                    
+                                    for j in range(len(hierarchy)): #for the one name, start cycling through each layer
+                                        pool=engine[hierarchy[j]].str.lower().values 
+                                        for k in range(len(pool)): #match with every name in pool layer
+                                            if filter==codes[k]:
+                                                element=pool[k]
+                                                if target==element:
+                                                    if k in found:
+                                                        layerfound.pop(found.index(k))
+                                                        found.remove(k)
+                                                    matched=True
+                                                    found=found+[k]
+                                                    layerfound=layerfound+[j]
+                                                if "|" in str(element):
+                                                    alternatives=element.split("|")
+                                                    for m in range(len(alternatives)):
+                                                        if target==alternatives[m]:
+                                                            if k in found:
+                                                                layerfound.pop(found.index(k))
+                                                                found.remove(k)
+                                                            matched=True
+                                                            found=found+[k]
+                                                            layerfound=layerfound+[j]
+                                except:
+                                    pass
+                            
+
+                            if not matched: #if still zero direct match (either English word zero direct match, or translated to English zero direct match)
+                            
+                                
+                                matrix = fuzzyset.FuzzySet()
+                                
+
+                                for j in range(len(hierarchy)): #add each word from each layer to the fuzzy set algo
+                                    pool=engine[hierarchy[j]].str.lower().values 
+                                    for k in range(len(pool)):
+                                        if filter==codes[k]:
+                                            element=pool[k]
+                                            if type(element)==str:
+                                                if "|" in str(element):
+                                                    temp=[]
+                                                    alternatives=element.split("|")
+                                                    for m in range(len(alternatives)):
+                                                        matrix.add(alternatives[m])    
+                                                else:
+                                                    matrix.add(element)
+                                
+                                closest=matrix.get(target)[0][1] #return closest match
+                                fitness=matrix.get(target)[0][0] #return cosine similarity
+                                
+                                
+                                if fitness>=threshold: #only attempt closest match if similarity is over a certain threshold
+                                    for j in range(len(hierarchy)): #for the one name, start cycling through each layer
+                                        pool=engine[hierarchy[j]].str.lower().values 
+                                        for k in range(len(pool)): #match with each item in the pool layer of database
+                                            if filter==codes[k]:
+                                                element=pool[k]
+                                                if closest==element:
+                                                    if k in found:
+                                                        layerfound.pop(found.index(k))
+                                                        found.remove(k)
+                                                    matched=True
+                                                    found=found+[k]
+                                                    layerfound=layerfound+[j]
+                                                if "|" in str(element):
+                                                    alternatives=element.split("|")
+                                                    for m in range(len(alternatives)):
+                                                        if closest==alternatives[m]:
+                                                            if k in found:
+                                                                layerfound.pop(found.index(k))
+                                                                found.remove(k)
+                                                            matched=True
+                                                            found=found+[k]
+                                                            layerfound=layerfound+[j]
+
+                results=results+[found] #add all matches back to the output list
+                results_layerfound=results_layerfound+[layerfound]
+                progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
+                progressbar.progress(int((i+1)/len(names)*90))
+
 
             #handling results-------------------------------------------
             final=[]
