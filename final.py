@@ -724,10 +724,10 @@ else: #-------------------------------------------------------------------------
                                                         found=found+[k]
                                                         layerfound=layerfound+[j]
 
-                results=results+[found] #add all matches back to the output list
-                results_layerfound=results_layerfound+[layerfound]
-                progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
-                progressbar.progress(int((i+1)/len(names)*90))
+                    results=results+[found] #add all matches back to the output list
+                    results_layerfound=results_layerfound+[layerfound]
+                    progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
+                    progressbar.progress(int((i+1)/len(names)*90))
             
             else: #--------------------------------------------------------------------
                 filters=list(df[constraint])
@@ -859,10 +859,10 @@ else: #-------------------------------------------------------------------------
                                                             found=found+[k]
                                                             layerfound=layerfound+[j]
 
-                results=results+[found] #add all matches back to the output list
-                results_layerfound=results_layerfound+[layerfound]
-                progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
-                progressbar.progress(int((i+1)/len(names)*90))
+                    results=results+[found] #add all matches back to the output list
+                    results_layerfound=results_layerfound+[layerfound]
+                    progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
+                    progressbar.progress(int((i+1)/len(names)*90))
 
 
             #handling results-------------------------------------------
