@@ -738,8 +738,11 @@ else: #-------------------------------------------------------------------------
                 filters=list(df[constraint])
                 codes=list(engine["GID_0"].str.lower())
                 for i in range(len(names)): #one name at a time
-                    target=names[i].lower()
-                    filter=filters[i].lower()
+                    try:
+                        target=names[i].lower()
+                        filter=filters[i].lower()
+                    except:
+                        pass
                     matched=False
                     repeated=False
                     found=[]
