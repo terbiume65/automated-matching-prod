@@ -21,6 +21,9 @@ if 'Dataset' not in st.session_state:
 if 'Output' not in st.session_state:
     st.session_state['Output'] = None
 
+if 'Indices' not in st.session_state:
+    st.session_state['Indices'] = None
+
 df=st.session_state['Dataset'] 
 
 
@@ -1027,8 +1030,11 @@ else: #-------------------------------------------------------------------------
             
             st.download_button(label="Download as Excel",file_name="output.xlsx",data=buffer,)
 
-            indicestowrite=str(results)
-            st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=indicestowrite)
+            try:
+                st.session_state['Indices']=str(results)
+            except:
+                pass
+            st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=st.session_state['Indices'])
 
 
         
