@@ -24,6 +24,10 @@ if 'Output' not in st.session_state:
 if 'Indices' not in st.session_state:
     st.session_state['Indices'] = None
 
+if 'Results' not in st.session_state:
+    st.session_state['Results'] = None
+
+
 df=st.session_state['Dataset'] 
 
 
@@ -869,6 +873,7 @@ else: #-------------------------------------------------------------------------
                     results_layerfound=results_layerfound+[layerfound]
                     progresslabel.write(f"Matching item {i+1} out of {len(names)}...")
                     progressbar.progress(int((i+1)/len(names)*90))
+                    st.session_state['Results']=results
 
                     
 
@@ -1031,7 +1036,7 @@ else: #-------------------------------------------------------------------------
             st.download_button(label="Download as Excel",file_name="output.xlsx",data=buffer,)
 
             if st.session_state['Indices'] is None:
-                st.session_state['Indices']=str(results)
+                st.session_state['Indices']=str(st.session_state['Results'])
             
             st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=st.session_state['Indices'])
 
