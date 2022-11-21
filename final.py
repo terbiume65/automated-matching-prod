@@ -1027,8 +1027,8 @@ else: #-------------------------------------------------------------------------
             
             st.download_button(label="Download as Excel",file_name="output.xlsx",data=buffer,)
 
-            
-            st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=str(results))
+            indicestowrite=str(results)
+            st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=indicestowrite)
 
 
         
