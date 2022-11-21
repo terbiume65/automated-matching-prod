@@ -1030,10 +1030,9 @@ else: #-------------------------------------------------------------------------
             
             st.download_button(label="Download as Excel",file_name="output.xlsx",data=buffer,)
 
-            try:
+            if st.session_state['Indices'] is None:
                 st.session_state['Indices']=str(results)
-            except:
-                pass
+            
             st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=st.session_state['Indices'])
 
 
