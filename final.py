@@ -426,15 +426,15 @@ stopwords=['sub-prefecture',
 st.title("Automation of Geographical Matching at all levels")
 st.write("This web app takes a dataset with a column of place names, even with spelling mistakes or in a different language, and return its match from the GADM database")
 
-model=st.radio("Choose the model",("Country names matching","Sub-country level geographical matching"))
+model=st.radio("Choose the model",("Country names matching (ISO-3166)","Sub-country level geographical matching (GADM Database)"))
 
-if model=="Country names matching":
+if model=="Country names matching (ISO-3166)":
     engine=pd.read_csv("correction.csv",encoding="utf-8-sig")
 else:
     engine=pd.read_csv("GADMsmall.csv",encoding="utf-8-sig")
 official=pd.read_csv("official.csv",encoding="utf-8-sig")
 
-if model=="Country names matching":#----------------------------------------------------------------------------
+if model=="Country names matching (ISO-3166)":#----------------------------------------------------------------------------
     st.header("Input")
     file=st.file_uploader('Upload your dataset',type=["csv","xls","xlsx"],key=0) 
     submit=st.button("Submit")
@@ -1042,7 +1042,7 @@ else: #-------------------------------------------------------------------------
                 st.session_state['Indices']=str(st.session_state['Results'])
             
             st.download_button(label="Download matched indices for shapefile matching",file_name="matchindices.txt",data=st.session_state['Indices'])
-            st.write("Download the .csv file and matched indices if you want to continue with shapefile matching and get a .gpkg file")
+            st.info("Download the .csv file and matched indices if you want to continue with shapefile matching and get a .gpkg file")
 
 
         
