@@ -1041,7 +1041,8 @@ else: #-------------------------------------------------------------------------
             if st.session_state['Indices'] is None:
                 st.session_state['Indices']=str(st.session_state['Results'])
             
-            st.download_button(label="Download match indices for shapefile matching",file_name="matchindices.txt",data=st.session_state['Indices'])
+            st.download_button(label="Download matched indices for shapefile matching",file_name="matchindices.txt",data=st.session_state['Indices'])
+            st.write("Download the .csv file and matched indices if you want to continue with shapefile matching and get a .gpkg file")
 
 
         
